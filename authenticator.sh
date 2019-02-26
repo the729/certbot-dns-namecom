@@ -16,15 +16,17 @@ else
 	DOMAINS=$(curl -fs 'https://api.name.com/v4/domains' \
 		-u "$API_USERNAME"':'"$API_TOKEN" \
 			| python -c "import sys,json;print(' '.join(str(i['domainName']) for i in json.load(sys.stdin)['domains']))")
-	echo $DOMAINS > /tmp/DOMAINS
 fi
 
 # Get domain
 DOMAIN=$(python -c "print(next((i for i in '$DOMAINS'.split() if '.$CERTBOT_DOMAIN'.endswith('.'+i)),''))")
 if [ -z $DOMAIN ]; then
 	echo "Domain not found: no domain with matching name '$CERTBOT_DOMAIN'" > /proc/self/fd/2
+    rm -f /tmp/DOMAINS
 	exit 1
 fi
+echo $DOMAINS > /tmp/DOMAINS
+
 NEWHOST=_acme-challenge.${CERTBOT_DOMAIN}
 NEWHOST=${NEWHOST/.$DOMAIN/}
 
