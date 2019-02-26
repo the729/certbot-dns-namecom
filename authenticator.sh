@@ -27,10 +27,11 @@ if [ -z $DOMAIN ]; then
 fi
 
 # Create TXT record
+NEWHOST=$(python -c "print(('_acme-challenge.'+'$CERTBOT_DOMAIN').replace('.'+'$DOMAIN', ''))")
 RECORD_ID=$(curl -fs 'https://api.name.com/v4/domains/'"$DOMAIN"'/records' \
 	-X POST \
 	-u "$API_USERNAME"':'"$API_TOKEN" \
-	--data '{"host":"_acme-challenge","type":"TXT","answer":"'"$CERTBOT_VALIDATION"'"}' \
+	--data '{"host":"'"$NEWHOST"'","type":"TXT","answer":"'"$CERTBOT_VALIDATION"'"}' \
 		| python -c "import sys,json;print(json.load(sys.stdin)['id'])")
 
 # Save info for cleanup
