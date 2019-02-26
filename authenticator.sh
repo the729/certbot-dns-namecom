@@ -27,8 +27,7 @@ if [ -z $DOMAIN ]; then
 fi
 echo $DOMAINS > /tmp/DOMAINS
 
-NEWHOST=_acme-challenge.${CERTBOT_DOMAIN}
-NEWHOST=${NEWHOST/.$DOMAIN/}
+NEWHOST=$(python -c "print(('_acme-challenge.'+'$CERTBOT_DOMAIN').replace('.'+'$DOMAIN', ''))")
 
 # Create TXT record
 RECORD_ID=$(curl -fs 'https://api.name.com/v4/domains/'"$DOMAIN"'/records' \
